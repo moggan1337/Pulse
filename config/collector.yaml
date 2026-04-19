@@ -1,0 +1,142 @@
+# Pulse Configuration
+# Distributed Tracing with ML Anomaly Detection
+
+# Service Configuration
+service:
+  name: pulse
+  host: 0.0.0.0
+  port: 8080
+  log_level: INFO
+
+# OpenTelemetry Configuration
+opentelemetry:
+  enabled: true
+  endpoint: http://localhost:4317
+  insecure: true
+  compression: gzip
+
+# Storage Configuration
+storage:
+  backend: memory  # memory, sqlite, redis, elasticsearch
+  path: ./data
+  retention_days: 7
+  batch_size: 100
+  flush_interval: 5
+
+# SQLite specific config
+sqlite:
+  path: ./data/pulse.db
+  journal_mode: WAL
+  synchronous: NORMAL
+  cache_size: 10000
+
+# Redis specific config
+redis:
+  host: localhost
+  port: 6379
+  db: 0
+  password: null
+  ssl: false
+
+# Elasticsearch specific config
+elasticsearch:
+  hosts:
+    - http://localhost:9200
+  index_prefix: pulse
+  username: null
+  password: null
+
+# ML Anomaly Detection Configuration
+ml:
+  enabled: true
+  models:
+    isolation_forest:
+      enabled: true
+      contamination: 0.1
+      n_estimators: 100
+      max_samples: 256
+    lstm:
+      enabled: true
+      hidden_size: 64
+      num_layers: 2
+      sequence_length: 10
+      epochs: 10
+  
+  detection_threshold: 0.7
+  update_online: true
+
+# Alerting Configuration
+alerting:
+  enabled: true
+  forecast_horizon_seconds: 300
+  prediction_threshold: 0.8
+  
+  rules:
+    - name: High Error Rate
+      metric: error_rate
+      condition: gt
+      threshold: 0.05
+      severity: high
+      cooldown_seconds: 300
+    
+    - name: High Latency P95
+      metric: p95_latency_ms
+      condition: gt
+      threshold: 1000
+      severity: medium
+      cooldown_seconds: 300
+    
+    - name: Low Availability
+      metric: availability
+      condition: lt
+      threshold: 0.99
+      severity: critical
+      cooldown_seconds: 60
+
+# SLO Configuration
+slo:
+  targets:
+    - id: availability-999
+      name: 99.9% Availability
+      sli_type: availability
+      target: 0.999
+      window_days: 30
+    
+    - id: latency-p95-500ms
+      name: P95 Latency < 500ms
+      sli_type: latency
+      target: 500
+      window_days: 7
+
+# Graph Configuration
+graphs:
+  generation_interval_seconds: 60
+  time_window_minutes: 60
+  bottleneck_threshold_ms: 500
+
+# Sampling Configuration
+sampling:
+  default_rate: 1.0  # 100% sampling by default
+  per_service:
+    api-gateway: 1.0
+    user-service: 0.5
+    order-service: 0.5
+
+# Context Propagation
+context_propagation:
+  formats:
+    - w3c
+    - b3
+  primary: w3c
+
+# Health Check
+health:
+  enabled: true
+  endpoint: /health
+  interval_seconds: 30
+
+# Metrics Export
+metrics:
+  enabled: true
+  endpoint: /metrics
+  format: prometheus
