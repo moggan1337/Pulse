@@ -25,6 +25,24 @@
 
 ---
 
+## 🎬 Demo
+![Pulse Demo](demo.gif)
+
+*Distributed tracing with ML anomaly detection*
+
+## Screenshots
+| Component | Preview |
+|-----------|---------|
+| Trace View | ![trace](screenshots/trace-view.png) |
+| Anomaly Detection | ![anomaly](screenshots/anomaly.png) |
+| Service Map | ![map](screenshots/service-map.png) |
+
+## Visual Description
+Trace view shows request flow through services with timing. Anomaly detection highlights anomalous spans with severity. Service map displays dependency graph with traffic patterns.
+
+---
+
+
 ## Table of Contents
 
 - [Overview](#overview)
